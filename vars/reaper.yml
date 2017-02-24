@@ -4,6 +4,10 @@
 # Apache Reaper
 ---
 application: reaper
-reaper_version: "master"
+reaper_version: "0.4.0"
+reaper_url: https://github.com/thelastpickle/cassandra-reaper/releases/download/v{{reaper_version}}/cassandra-reaper-v{{reaper_version}}-release.tar.gz
 reaper_dir: "/opt/cassandra-reaper"
 reaper_package_list: ["java-1.8.0-openjdk", "java-1.8.0-openjdk-devel", "net-tools"]
+
+cassandra_seeds: ["127.0.0.1"]
+cassandra_cluster_name: "Test Cluster"
