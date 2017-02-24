@@ -1,0 +1,7 @@
+# (c) 2017 DataNexus Inc.  All Rights Reserved
+---
+- name: Get IP address of {{iface_name}}
+  shell: "/usr/sbin/ip addr list {{iface_name}} | grep -w 'inet' | cut -d' ' -f6 | cut -d'/' -f1"
+  register: get_iface_addr_out
+- set_fact:
+    iface_addr: "{{get_iface_addr_out.stdout}}"

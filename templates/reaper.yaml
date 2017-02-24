@@ -1,0 +1,39 @@
+# Cassandra Reaper Configuration
+segmentCount: 200
+repairParallelism: DATACENTER_AWARE
+repairIntensity: 0.9
+scheduleDaysBetween: 7
+repairRunThreadCount: 15
+hangingRepairTimeoutMins: 30
+storageType: cassandra
+enableCrossOrigin: true
+incrementalRepair: true
+allowUnreachableNodes: false
+
+
+logging:
+  level: INFO
+  loggers:
+    io.dropwizard: WARN
+    org.eclipse.jetty: WARN
+  appenders:
+    - type: console
+      logFormat: "%-6level [%d] [%t] %logger{5} - %msg %n"
+
+server:
+  type: default
+  applicationConnectors:
+    - type: http
+      port: 8080
+      bindHost: 10.11.0.69
+  adminConnectors:
+    - type: http
+      port: 8081
+      bindHost: 10.11.0.69
+  requestLog:
+    appenders: []
+
+cassandra:
+  clusterName: "Test_Cassandra_Cluster"
+  contactPoints: ["10.11.0.45", "10.11.0.44", "10.11.0.43"]
+  keyspace: reaper_db

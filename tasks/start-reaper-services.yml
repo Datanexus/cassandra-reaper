@@ -1,0 +1,8 @@
+# (c) 2017 DataNexus Inc.  All Rights Reserved
+---
+- name: Pause before starting reaper service
+  become: true
+  command: sleep 10
+- name: Start reaper
+  become: true
+  command: systemctl start cassandra-reaper.service

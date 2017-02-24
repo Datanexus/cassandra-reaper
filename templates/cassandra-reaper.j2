@@ -1,0 +1,14 @@
+[Unit]
+Description=Cassandra Reaper
+Requires=network.target remote-fs.target
+After=network.target remote-fs.target
+
+[Service]
+Type=forking
+User=root
+Group=root
+ExecStart=/opt/cassandra-reaper/start.sh
+ExecStop=/opt/cassandra-reaper/stop.sh
+
+[Install]
+WantedBy=multi-user.target

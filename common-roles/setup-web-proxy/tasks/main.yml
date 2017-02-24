@@ -1,0 +1,70 @@
+# (c) 2017 DataNexus Inc.  All Rights Reserved
+---
+- set_fact: http_proxy="{{proxy_env.http_proxy | default('')}}"
+  when: proxy_env is defined
+- name: Set http_proxy environment variables
+  set_fact:
+    proxy_vars:
+      http_proxy: "{{ http_proxy }}"
+      https_proxy: "{{ http_proxy }}"
+      HTTP_PROXY: "{{ http_proxy }}"
+      HTTPS_PROXY: "{{ http_proxy }}"
+  when: not (http_proxy is undefined or http_proxy is none or http_proxy | trim == '')
+- set_fact: no_proxy="{{proxy_env.no_proxy | default('')}}"
+  when: proxy_env is defined
+- name: Set no_proxy environment variables
+  set_fact:
+    no_proxy_vars:
+      no_proxy: "{{ no_proxy }}"
+      NO_PROXY: "{{ no_proxy }}"
+  when: not (no_proxy is undefined or no_proxy is none or no_proxy | trim == '')
+- set_fact: proxy_username="{{proxy_env.proxy_username | default('')}}"
+  when: proxy_env is defined
+- name: Set proxy_username environment variable
+  set_fact:
+    proxy_username_var:
+      proxy_username: "{{ proxy_username }}"
+  when: not (proxy_username is undefined or proxy_username is none or proxy_username | trim == '')
+- set_fact: proxy_password="{{proxy_env.proxy_password | default('')}}"
+  when: proxy_env is defined
+- name: Set proxy_password environment variable
+  set_fact:
+    proxy_password_var:
+      proxy_password: "{{ proxy_password }}"
+  when: not (proxy_password is undefined or proxy_password is none or proxy_password | trim == '')
+- name: Initialize environment_vars
+  set_fact: environment_vars={}
+- name: Set environment variables
+  set_fact:
+    environment_vars:  "{{ no_proxy_vars|default({}) | combine(proxy_vars|default({})) | combine(proxy_username_var|default({})) | combine(proxy_password_var|default({})) }}"
+- name: add http_proxy to yum.conf if defined
+  become: true
+  lineinfile:
+    dest: /etc/yum.conf 
+    line:  "proxy={{http_proxy}}"
+    state: present
+  when: not (http_proxy is undefined or http_proxy is none or http_proxy | trim == '')
+- name: add proxy_username to yum.conf if defined
+  become: true
+  lineinfile:
+    dest: /etc/yum.conf 
+    line:  "proxy_username={{proxy_username}}"
+    state: present
+  when: not (proxy_username is undefined or proxy_username is none or proxy_username | trim == '')
+- name: add proxy_password to yum.conf if defined
+  become: true
+  lineinfile:
+    dest: /etc/yum.conf 
+    line:  "proxy_password={{proxy_password}}"
+    state: present
+  when: not (proxy_password is undefined or proxy_password is none or proxy_password | trim == '')
+- name: Unpack certificates
+  become: true
+  unarchive:
+    src: "{{proxy_certs_file}}"
+    dest: /etc/pki/ca-trust/source/anchors
+  when: not (http_proxy is undefined or http_proxy is none or http_proxy | trim == '')
+- name: Add certificates to list of trusted certs
+  become: true
+  shell: update-ca-trust
+  when: not (http_proxy is undefined or http_proxy is none or http_proxy | trim == '')

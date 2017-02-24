@@ -1,0 +1,13 @@
+# (c) 2017 DataNexus Inc.  All Rights Reserved
+---
+- name: Install/configure reaper server
+  hosts: "{{host_inventory}}"
+  vars_files:
+    - vars/reaper.yml
+  vars:
+    - combined_package_list: "{{ (default_packages|default([])) | union(reaper_package_list) | union((install_packages_by_tag|default({})).reaper|default([])) }}"
+  roles:
+    - ensure-interfaces-up
+    - setup-web-proxy
+    - { role: install-packages, package_list: "{{combined_package_list}}" }
+    - dn-cassandra-reaper

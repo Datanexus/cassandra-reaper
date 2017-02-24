@@ -1,0 +1,9 @@
+# (c) 2017 DataNexus Inc.  All Rights Reserved
+#
+# Defaults that are necessary for all deployments of
+# Apache Reaper
+---
+application: reaper
+reaper_version: "master"
+reaper_dir: "/opt/cassandra-reaper"
+reaper_package_list: ["java-1.8.0-openjdk", "java-1.8.0-openjdk-devel", "net-tools"]

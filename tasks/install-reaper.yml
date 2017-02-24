@@ -1,0 +1,22 @@
+# (c) 2017 DataNexus Inc.  All Rights Reserved
+
+- name: Create "{{reaper_dir}}"
+  become: true
+  file:
+    path: "{{reaper_dir}}"
+    state: directory
+    owner: reaper
+    group: reaper
+- name: Create reaper installation
+  become: true
+  copy:
+    src: "../templates/cassandra-reaper-0.4.0-SNAPSHOT.jar"
+    dest: "{{reaper_dir}}/cassandra-reaper-0.4.0-SNAPSHOT.jar"
+    mode: 0644
+- name: Create reaper configuration
+  become: true
+  template:
+    src: "../templates/reaper.yaml"
+    dest: "{{reaper_dir}}/reaper.yaml"
+    mode: 0644
+

@@ -1,0 +1,9 @@
+# (c) 2017 DataNexus Inc.  All Rights Reserved. 
+---
+- name: "Installing {{ package_list }}"
+  become: true
+  package:
+    name: "{{ item }}"
+    state: present
+  environment: "{{ proxy_env | default({}) }}"
+  with_items: "{{ package_list | default([]) }}"

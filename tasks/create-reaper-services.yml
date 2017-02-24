@@ -1,0 +1,12 @@
+# (c) 2017 DataNexus Inc.  All Rights Reserved
+---
+- name: Create reaper service file
+  become: true
+  template:
+    src: "../templates/cassandra-reaper.j2"
+    dest: /etc/systemd/system/cassandra-reaper.service
+    mode: 0644
+- name: restart systemctl daemon
+  become: true
+  command: systemctl daemon-reload
+  

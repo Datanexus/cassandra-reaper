@@ -1,0 +1,6 @@
+# (c) 2017 DataNexus Inc.  All Rights Reserved
+- include: add-reaper-user.yml static=no tags=install,reaper
+- include: install-reaper.yml static=no tags=install,reaper
+- include: create-reaper-services.yml static=no tags=install,reaper
+- include: enable-reaper-services.yml static=no tags=service-mgmt,reaper
+- include: start-reaper-services.yml static=no tags=service-mgmt,reaper
