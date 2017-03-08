@@ -1,5 +1,13 @@
 # (c) 2017 DataNexus Inc.  All Rights Reserved
 
+- name: Download cassandra-reaper to /tmp
+  become: true
+  get_url:
+    url: "{{reaper_url}}"
+    dest: /tmp
+    mode: 0644
+    validate_certs: no
+  environment: "{{environment_vars}}"
 - name: Create "{{reaper_dir}}"
   become: true
   file:
@@ -7,16 +15,36 @@
     state: directory
     owner: reaper
     group: reaper
-- name: Create reaper installation
+- name: Unpack reaper distribution into "{{reaper_dir}}"
   become: true
-  copy:
-    src: "../templates/cassandra-reaper-0.4.0-SNAPSHOT.jar"
-    dest: "{{reaper_dir}}/cassandra-reaper-0.4.0-SNAPSHOT.jar"
-    mode: 0644
+  unarchive:
+    copy: no
+    src: "/tmp/cassandra-reaper-v{{reaper_version}}-release.tar.gz"
+    dest: "{{reaper_dir}}"
+    extra_opts: [ "--strip-components=1" ]
+    owner: reaper
+    group: reaper
 - name: Create reaper configuration
   become: true
   template:
     src: "../templates/reaper.yaml"
     dest: "{{reaper_dir}}/reaper.yaml"
     mode: 0644
+- name: Create start script
+  become: true
+  template:
+    src: "../templates/start.sh"
+    dest: "{{reaper_dir}}/start.sh"
+    mode: 0744
+    owner: reaper
+    group: reaper
+- name: Create stop script
+  become: true
+  template:
+    src: "../templates/stop.sh"
+    dest: "{{reaper_dir}}/stop.sh"
+    mode: 0744
+    owner: reaper
+    group: reaper
+
 

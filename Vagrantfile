@@ -49,6 +49,15 @@ optparse = OptionParser.new do |opts|
     options[:reaper_url] = reaper_url.gsub(/^=/,'')
   end
 
+  options[:cassandra_seeds] = nil
+  opts.on( '--cassandra-seeds CASSANDRA_SEEDS', 'list of ipaddresses to contact Cassandra' ) do |cassandra_seeds|
+    options[:cassandra_seeds] = cassandra_seeds.gsub(/^=/,'')
+  end
+
+  options[:cassandra_cluster_name] = nil
+  opts.on( '--cassandra-cluster-name CASSANDRA_CLUSTER_NAME', 'cluster name of Cassandra' ) do |cassandra_cluster_name|
+    options[:reaper_urlcassandra_cluster_name] = cassandra_cluster_name.gsub(/^=/,'')
+  end
   opts.on_tail( '-h', '--help', 'Display this screen' ) do
     print opts
     exit
@@ -80,7 +89,7 @@ elsif options[:reaper_addr] && !(options[:reaper_addr] =~ Resolv::IPv4::Regex)
 end
 
 if options[:reaper_url] && !(options[:reaper_url] =~ URI::regexp)
-  print "ERROR; input Solr URL '#{options[:reaper_url]}' is not a valid URL\n"
+  print "ERROR; input Reaper URL '#{options[:reaper_url]}' is not a valid URL\n"
   exit 3
 end
 
@@ -186,14 +195,19 @@ Vagrant.configure("2") do |config|
       host_inventory: reaper_addr_array
     }
     # if defined, set the 'extra_vars[:reaper_url]' value to the value that was passed in on
-    # the command-line (eg. "https://10.0.2.2/apache-reaper-1.0.2.tar.gz.tar.gz")
+    # the command-line (eg. "https://10.0.2.2/cassandra-reaper-1.0.2.tar.gz.tar.gz")
     if options[:reaper_url]
       ansible.extra_vars[:reaper_url] = "#{options[:reaper_url]}"
     end
-    # if defined, set the 'extra_vars[:reaper_url]' value to the value that was passed in on
-    # the command-line (eg. "https://10.0.2.2/zookeeper-3.4.9.tar.gz")
-    if options[:zookeeper_url]
-      ansible.extra_vars[:zookeeper_url] = "#{options[:zookeeper_url]}"
+    # if defined, set the 'extra_vars[:cassandra_seeds]' value to the value that was passed in on
+    # the command-line 
+    if options[:cassandra_seeds]
+      ansible.extra_vars[:cassandra_seeds] = "#{options[:cassandra_seeds]}".split(/,\w*/)
+    end
+    # if defined, set the 'extra_vars[:cassandra_seeds]' value to the value that was passed in on
+    # the command-line
+    if options[:cassandra_cluster_name]
+      ansible.extra_vars[:cassandra_cluster_name] = "#{options[:cassandra_cluster_name]}"
     end
   end
 
